@@ -2,6 +2,10 @@
 
 ParseToObject is a simple library to parse param (array/object) into object.
 
+## Required
+
+php >= 8.2
+
 ## Usage
 
 ```php
