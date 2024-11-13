@@ -12,9 +12,9 @@ class ParseAttr {
     public bool $isDefault; // 是否有默认值
     public $default; // 默认值
     public bool $required; // 是否必填
-    public ?arrayObjectClass $className; // 当类型是array时,类名,主要是针对数组中对象
+    public ?string $className; // 当类型是array时,类名,主要是针对数组中对象
     public ?string $sourceType; // 来源类型(json-str,delimiter-str)
-    public ?string $delimiter; // 分隔符(默认：英文逗号),当来源类型为时有效。
+    public string $delimiter; // 分隔符(默认：英文逗号),当来源类型为时有效。
 
     public function __construct(
         ?string $name = null,
@@ -22,8 +22,8 @@ class ParseAttr {
         bool $isDefault = false,
         $default = null,
         bool $required = false,
-        ?arrayOjectClass $className = null,
-        string $sourceType = null,
+        ?string $className = null,
+        ?string $sourceType = null,
         string $delimiter = ','
     ) {
         $this->name = $name;
@@ -52,7 +52,7 @@ class ParseAttr {
         return $this->required;
     }
 
-    public function getArrayObjectClassName() {
+    public function getArrayClassName() {
         return $this->className;
     }
 
@@ -84,15 +84,15 @@ class ParseAttr {
     /*
      * 是否是数组对象
      */
-    public function isArrayObject() {
+    public function isArrayClass() {
         return $this->type == 'array' && $this->className != null;
     }
 
     /*
      * 是否是对象
      */
-    public function isObject() {
-        return is_object($this->type);
+    public function isClass() {
+        return class_exists($this->type) && !enum_exists($this->type);
     }
 
     /*

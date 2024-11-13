@@ -8,42 +8,63 @@ use Tests\Data\TestOject;
 final class ParseTest extends TestCase
 {
     #[Test]
-    public function test(): void
+    public function testBase(): void
     {
-
+        $sub = [
+            'id' => 11,
+                'name' => 'TestSub'
+        ];
         $params = [
             'id' => 1,
             'name' => 'Test',
             'age' => 20,
             'type' => 1,
+            'sub' => $sub,
+            'subList' => [
+                [
+                    'id' => 12,
+                    'name' => 'TestSub12'
+                ],
+                [
+                    'id' => 13,
+                    'name' => 'TestSub13'
+                ]
+            ],
+            'numberList' => [1, 2, 3],
+            'delimiterStr' => 'a|b|c',
+            'jsonStr' => json_encode($sub),
         ];
 
         $testOject = TestOject::from($params);
 
         $this->assertSame($testOject->id, $params['id']);
+        $this->assertSame($testOject->age, $params['age']);
+
+        $this->assertSame($testOject->subOject->id, $params['sub']['id']);
+        $this->assertSame(count($testOject->subList), count($params['subList']));
+        $this->assertSame($testOject->numberList, $params['numberList']);
+        $this->assertSame($testOject->delimiterList, explode('|', $params['delimiterStr']));
+        $this->assertSame($testOject->jsonObj->id, $sub['id']);
     }
 
     #[Test]
-    public function test1(): void
+    public function testType(): void
     {
-
         $params = [
             'id' => "a",
             'name' => 'Test',
             'age' => 20,
             'type' => 1,
         ];
-
         $testOject = TestOject::from($params);
 
         $this->assertSame($testOject->id, 0);
-        $this->assertSame($testOject->age, $params['age']);
+        
     }
 
     #[Test]
     public function testUninitialized(): void
     {
-
         $params = [
             'id' => 1,
             'name' => 'Test',

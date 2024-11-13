@@ -27,12 +27,12 @@ class Parser {
 
             $attr->setValByParams($this->params);
 
-            if ($attr->isVal() && $attr->isObject()) {
-                $value = self::make($attr->getType(), $value)->convertToObject();
-            } else if ($attr->isVal() && $attr->isArrayObject()) {
+            if ($attr->isVal() && $attr->isClass()) {
+                $value = self::make($attr->getType(), $attr->getVal())->convertToObject();
+            } else if ($attr->isVal() && $attr->isArrayClass()) {
                 $value = [];
                 foreach ($attr->getVal() as $k => $v) {
-                    $value[$k] = self::make($attr->getArrayObjectClassName(), $v)->convertToObject();
+                    $value[$k] = self::make($attr->getArrayClassName(), $v)->convertToObject();
                 }
             } else {
                 $value = $attr->getVal();
@@ -40,11 +40,7 @@ class Parser {
 
             $prop->setAccessible(true);
 
-            try {
-                $prop->setValue($instance, $value);
-            } catch (\TypeError $e) {
-                throw new \Exception("param {$attr->getName()} 's data type is illegal.");
-            }
+            $prop->setValue($instance, $value);
         }
         
         return $instance;
