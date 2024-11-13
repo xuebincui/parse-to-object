@@ -39,7 +39,12 @@ class Parser {
             }
 
             $prop->setAccessible(true);
-            $prop->setValue($instance, $value);
+
+            try {
+                $prop->setValue($instance, $value);
+            } catch (\TypeError $e) {
+                throw new \Exception("param {$attr->getName()} 's data type is illegal.");
+            }
         }
         
         return $instance;

@@ -63,12 +63,26 @@ class ParseAttr {
     /*
      * 是否是内置类型
      */
-    public function isBuiltin() {
+    public function isBaseType() {
         return in_array($this->type, ['int', 'float', 'double', 'bool', 'string']);
     }
 
     /*
-     * 是否是数组
+     * 基础类型转换
+     */
+    public function baseTypeVal($val) {
+        return match ($this->type) {
+            'int' => intval($val),
+            'float' => floatval($val),
+            'double' => doubleval($val),
+            'bool' => boolval($val),
+            'string' => trim($val),
+            default => $val
+        };
+    }
+
+    /*
+     * 是否是数组对象
      */
     public function isArrayObject() {
         return $this->type == 'array' && $this->className != null;
@@ -81,11 +95,17 @@ class ParseAttr {
         return is_object($this->type);
     }
 
+    /*
+     * 是否是枚举
+     */
     public function isEnum() {
         return enum_exists($this->type);
     }
 
-    function parseValBySource($val) {
+    /*
+     * 根据来源类型，解析值
+     */
+    public function parseValBySource($val) {
         return match ($this->sourceType) {
             'json-str' => json_decode($val, true),
             'delimiter-str' => explode($this->delimiter, $val),

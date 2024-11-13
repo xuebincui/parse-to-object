@@ -6,6 +6,7 @@ namespace ParseToObject;
 class Attr extends ParseAttr {
     public bool $isVal = false;
     public $val;
+    public bool $allowsNull = true;
 
     public function __construct(
         \ReflectionProperty $prop
@@ -17,7 +18,7 @@ class Attr extends ParseAttr {
 
         $arguments = [
             'name' => $prop->getName(),
-            'type' => $prop->getType()->getName(),
+            'type' => $prop->getType() ? $prop->getType()->getName() : 'mixed',
         ];
         if ($prop->hasDefaultValue()) {
             $arguments['isDefault'] = true;
@@ -27,6 +28,8 @@ class Attr extends ParseAttr {
         }
         $arguments = array_merge($arguments, $attrs[0]->getArguments());
         parent::__construct(...$arguments);
+
+        $this->allowsNull = $prop->getType() ? $prop->getType()->allowsNull() : true;
     }
 
     public function setValByParams(array|object $params) : void {
@@ -52,6 +55,20 @@ class Attr extends ParseAttr {
                 $this->val = $this->parseValBySource($this->getParamsVal($params, $name));
             }
         }
+
+        $this->checkTypeAndVal();
+    }
+
+    private function checkTypeAndVal() {
+        if ($this->val === null) {
+            if ($this->allowsNull) {
+                return;
+            } else {
+                throw new \Exception("param {$this->getName()} cannot be null.");
+            }
+        }
+
+        $this->isBaseType() && $this->val = $this->baseTypeVal($this->val);
     }
 
     public function getVal() {

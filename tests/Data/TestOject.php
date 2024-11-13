@@ -12,8 +12,11 @@ class TestOject {
     #[ParseAttr(name: "id")]
     public int $id;
     #[ParseAttr]
-    public string $name;
-    public string $age;
+    public ?string $name;
+    #[ParseAttr]
+    public $age;
+    
+    public int $sex;
 
     use ParseToObject;
 }
