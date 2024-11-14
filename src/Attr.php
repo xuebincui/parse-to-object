@@ -8,9 +8,9 @@ use ParseToObject\Exceptions\ParamErrCode;
 
 
 class Attr extends ParseAttr {
-    public bool $isVal = false;
-    public $val;
-    public bool $allowsNull = true;
+    private bool $isVal = false;
+    private $val;
+    private bool $allowsNull = true;
 
     public function __construct(
         \ReflectionProperty $prop
