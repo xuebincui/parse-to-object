@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 use Tests\Data\TestOject;
+use ParseToObject\Exceptions\ParamException;
+use ParseToObject\Exceptions\ParamErrCode;
 
 final class ParseTest extends TestCase
 {
@@ -80,14 +82,18 @@ final class ParseTest extends TestCase
     #[Test]
     public function testNull(): void
     {
-        $this->expectExceptionMessage('param id cannot be null.');
-
         $params = [
             'id' => null,
             'name' => 'Test',
             'age' => 20,
         ];
-        $testOject = TestOject::from($params);
+        try {
+            $testOject = TestOject::from($params);
+        } catch (ParamException $e) {
+            $this->assertSame($e->getName(), "id");
+            $this->assertSame($e->getErrCode(), ParamErrCode::NotNull);
+            $this->assertSame($e->getMessage(), "param id is cannot be null");
+        }
     }
 
 }

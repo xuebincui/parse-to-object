@@ -92,3 +92,31 @@ ParseToObject\Parser::make(TestOject::class, $params)->convertToObject();
 | **className** | string | when type is 'array' and className is not null, className is the class name of array item. | null |
 | **sourceType** | string | source type, string (json-str,delimiter-str). | null |
 | **delimiter** | string | Valid when sourceType is 'delimiter-str'. | "," |
+
+## Exception
+```php
+use ParseToObject\Exceptions\ParamException;
+use ParseToObject\Exceptions\ParamErrCode;
+
+$params = [
+    'id' => null,
+    'name' => 'Test',
+    'age' => 20,
+];
+try {
+    $testOject = TestOject::from($params);
+} catch (ParamException $e) {
+    var_dump($e->getName()); // id
+    var_dump($e->getErrCode()); // ParamErrCode::NotNull
+    var_dump($e->getMessage()); // param id is cannot be null
+}
+```
+
+```php
+enum ParamErrCode: int {
+    case Required = 1; // 参数必须存在
+    case Missing = 2; // 参数不存在
+    case NotNull = 3; // 值不能为null
+    case ValueInvalid = 4; // 值无效
+}
+```

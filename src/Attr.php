@@ -3,6 +3,10 @@
 namespace ParseToObject;
 
 
+use ParseToObject\Exceptions\ParamException;
+use ParseToObject\Exceptions\ParamErrCode;
+
+
 class Attr extends ParseAttr {
     public bool $isVal = false;
     public $val;
@@ -37,11 +41,11 @@ class Attr extends ParseAttr {
 
         if (!$this->isParamsExist($params)) {
             if ($this->isRequired()) {
-                throw new \Exception("param {$name} is required");
+                throw new ParamException($name, ParamErrCode::Required);
             } else if ($this->isHasDefault()) {
                 $this->val = $this->getDefault();
             } else {
-                throw new \Exception("param {$name} is missing");
+                throw new ParamException($name, ParamErrCode::Missing);
             }
         } else {
             $this->isVal = true;
@@ -49,7 +53,7 @@ class Attr extends ParseAttr {
                 try {
                     $this->val = $this->getType()::from($this->getParamsVal($params, $name));
                 } catch (\Error $e) {
-                    throw new \Exception("param {$name} 's value is valid");
+                    throw new ParamException($name, ParamErrCode::ValueInvalid);
                 }
             } else {
                 $this->val = $this->parseValBySource($this->getParamsVal($params, $name));
@@ -64,7 +68,7 @@ class Attr extends ParseAttr {
             if ($this->allowsNull) {
                 return;
             } else {
-                throw new \Exception("param {$this->getName()} cannot be null.");
+                throw new ParamException($this->getName(), ParamErrCode::NotNull);
             }
         }
 
